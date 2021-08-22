@@ -1,0 +1,30 @@
+- name: Make temporary directory for micromamba
+  tempfile:
+    state: directory
+  register: tmpdir
+
+- name: Install micromamba
+  unarchive:
+    remote_src: true
+    src: "{{ base_url }}/{{ arch }}/{{ version }}"
+    dest: "{{ tmpdir }}"
+
+    # I could replace this whole file with this single task by using the new
+    # "include" parameter as below. I want this to work with Ansible 2.9 as
+    # provided in Ubuntu 20.04 so that I can bootstrap to a more recent version.
+    # Unfortunately that means I can't use "include" and hence all this nonsense
+    # with the temporary directory.
+
+    # dest: "{{ bin_micromamba_dest }}"
+    # include: bin/micromamba
+
+- name: Copy micromamba to destination
+  copy:
+    src: "{{ tmpdir }}/bin/micromamba"
+    dest: "{{ dest }}"
+    mode: "u=rwx,g=rx,o=rx"
+
+- name: Remove temporary directory
+  file:
+    path: "{{ tmpdir }}"
+    state: absent

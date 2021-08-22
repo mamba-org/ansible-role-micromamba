@@ -1,0 +1,24 @@
+repos:
+  - repo: git://github.com/pre-commit/pre-commit-hooks
+    rev: v4.0.1
+    hooks:
+
+      # Trims trailing whitespace.
+      - id: trailing-whitespace
+
+      # Attempts to load all yaml files to verify syntax.
+      - id: check-yaml
+
+      # Makes sure files end in a newline and only a newline.
+      - id: end-of-file-fixer
+
+  - repo: https://github.com/ansible-community/ansible-lint.git
+    rev: v5.1.2
+    hooks:
+      - id: ansible-lint
+        files: \.(yaml|yml)$
+
+  # - repo: https://github.com/markdownlint/markdownlint
+  #   rev: v0.11.0
+  #   hooks:
+  #     - id: markdownlint

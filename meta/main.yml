@@ -1,0 +1,26 @@
+galaxy_info:
+  role_name: micromamba
+  author: Ben Mares
+  description: Install micromamba, and optionally create a base conda environment.
+
+  license: MIT
+
+  min_ansible_version: 2.9
+
+  platforms:
+  # Probably this works with way more.
+    - name: Ubuntu
+      versions:
+        - focal
+
+  galaxy_tags:
+    - anaconda
+    - miniconda
+    - conda
+    - python
+    - packaging
+    - development
+    - mamba
+    - micromamba
+
+dependencies: []

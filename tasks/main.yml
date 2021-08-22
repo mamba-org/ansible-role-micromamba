@@ -1,0 +1,30 @@
+- name: Check if micromamba already exists
+  stat:
+    path: "{{ dest }}"
+  register: dest_stat
+
+- name: Install micromamba
+  include: download-and-extract.yml
+  when: not dest_stat.stat.exists
+
+- name: Build first part of arguments
+  set_fact:
+    first_args:
+      - micromamba
+      - install
+      - --yes
+      - "--root-prefix={{ root_prefix }}"
+      - "{{ ('--name=' + name) if name is defined else '' }}"
+      - "{{ ('--prefix=' + (prefix | default(root_prefix) )) if name is not defined else '' }}"
+  when: root_prefix is defined
+
+- name: Build channel list
+  set_fact:
+    channel_args: "{{ ['--channel='] | product(channels) | map('join') | list }}"
+  when: root_prefix is defined
+
+- name: Create a new conda environment
+  command:
+    argv: "{{ (first_args + channel_args + packages) | reject('equalto', '') | list }}"
+    creates: "{{ root_prefix }}"
+  when: root_prefix is defined
