@@ -7,7 +7,7 @@
   unarchive:
     remote_src: true
     src: "{{ base_url }}/{{ arch }}/{{ version }}"
-    dest: "{{ tmpdir }}"
+    dest: "{{ tmpdir.path }}"
 
     # I could replace this whole file with this single task by using the new
     # "include" parameter as below. I want this to work with Ansible 2.9 as
@@ -20,11 +20,11 @@
 
 - name: Copy micromamba to destination
   copy:
-    src: "{{ tmpdir }}/bin/micromamba"
+    src: "{{ tmpdir.path }}/bin/micromamba"
     dest: "{{ dest }}"
     mode: "u=rwx,g=rx,o=rx"
 
 - name: Remove temporary directory
   file:
-    path: "{{ tmpdir }}"
+    path: "{{ tmpdir.path }}"
     state: absent
