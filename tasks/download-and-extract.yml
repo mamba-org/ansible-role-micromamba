@@ -20,6 +20,7 @@
 
 - name: Copy micromamba to destination
   copy:
+    remote_src: true
     src: "{{ tmpdir.path }}/bin/micromamba"
     dest: "{{ dest }}"
     mode: "u=rwx,g=rx,o=rx"
