@@ -1,0 +1,32 @@
+---
+- name: Converge
+  hosts: all
+  tasks:
+    - name: Install just the executable
+      include_role:
+        name: maresb.micromamba
+    - name: Install just the executable
+      include_role:
+        name: maresb.micromamba
+      vars:
+        root_prefix: ~/micromamba-test
+        packages:
+          - s3fs-fuse
+        root_prefix_condarc:
+          channels:
+            - conda-forge
+          show_channel_urls: true
+    - name: Check if already initialized
+      # <https://docs.ansible.com/ansible/latest/user_guide/playbooks_checkmode.html#enforcing-or-preventing-check-mode-on-tasks>
+      lineinfile:
+        path: ~/.bashrc
+        line: '# >>> mamba initialize >>>'
+        state: present
+      check_mode: true
+      register: init_presence
+    - name: Initialize the environment
+      command: 'micromamba shell init --shell=bash --prefix=~/micromamba-test'
+      when: init_presence.changed
+    - name: Test s3fs
+      command: 'bash -i -c "micromamba activate; s3fs --version"'
+      changed_when: false

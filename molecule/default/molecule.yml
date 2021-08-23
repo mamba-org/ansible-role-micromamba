@@ -1,0 +1,20 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+platforms:
+  - name: instance
+    image: geerlingguy/docker-${MOLECULE_DISTRO:-ubuntu2004}-ansible:latest
+    pre_build_image: true
+provisioner:
+  name: ansible
+  inventory:
+    host_vars:
+      instance:
+        # I found this here, but it doesn't seem to work. (It seems to run ansible
+        # with Python 2.)
+        #   <https://github.com/ansible-community/molecule/issues/214#issuecomment-414730715>
+        ansible_python_interpreter: "/usr/bin/python3"
+verifier:
+  name: ansible
