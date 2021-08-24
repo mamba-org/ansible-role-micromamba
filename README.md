@@ -1,12 +1,10 @@
-Ansible role: maresb.micromamba
-===============================
+# Ansible role: maresb.micromamba
 
 Installs micromamba, and optionally create a root/base conda environment.
 
-Motivation
-----------
+## Motivation
 
-[Conda](https://docs.conda.io/projects/conda) is a very powerful Python-centric dependency management tool. Unfortunately, for environments with large numbers of dependencies, its Python-based dependency solver can take [hours](https://github.com/iterative/dvc.org/issues/2370#issuecomment-818891218) to complete.
+[Conda](https://docs.conda.io/projects/conda) is a very powerful Python-centric dependency management tool. Unfortunately, for environments with large numbers of dependencies, its slow dependency solver can take [hours](https://github.com/iterative/dvc.org/issues/2370#issuecomment-818891218) to complete.
 
 The new [Mamba](https://github.com/mamba-org/mamba) project addresses this issue by reimplementing the dependency solver in C++, and is lightning-fast. Apart from the solver, `mamba` delegates most tasks to the otherwise dependable `conda` tool.
 
@@ -14,8 +12,7 @@ The new [Mamba](https://github.com/mamba-org/mamba) project addresses this issue
 
 Micromamba eliminates the need for "distributions" such as Anaconda or Miniconda. You can set up your desired environment directly.
 
-Role Variables
---------------
+## Role Variables
 
 ```yaml
 arch: linux-64
@@ -50,8 +47,17 @@ packages:
 
 A list of initial conda packages to be installed when a new root prefix is created.
 
-Example Playbooks
------------------
+---
+
+```yaml
+root_prefix_condarc:
+  channels:
+    - conda-forge
+```
+
+Contents to write to `.condarc` in the new root prefix. If not defined, then no `.condarc` file is created.
+
+## Example Playbooks
 
 ```yaml
 - hosts: servers
@@ -84,44 +90,60 @@ This downloads `micromamba` into `/tmp/micromamba` and creates a new root prefix
 ```yaml
 - hosts: servers
   become: yes
-  become_user: conda-user
+  become_user: condauser
   roles:
       - maresb.micromamba
   vars:
     root_prefix: ~/micromamba
+    root_prefix_condarc:
+      channels:
+        - conda-forge
     packages:
       - s3fs-fuse
 ```
 
-This creates a new root prefix in /home/conda-user/micromamba and creates a conda environment without Python.
+This creates a new root prefix in `/home/conda-user/micromamba` and creates a conda environment without Python. It also places a `.condarc` file in the root prefix to configure packages to be installed by default from the `conda-forge` channel.
 
-Subsequent Usage
-----------------
+## Subsequent Usage
 
-In order to be used, a conda environment must first be *activated*. Activation involves altering the `PATH` and other environment variables in the active shell. This can be accomplished with the commands
+In order run any commands from a conda environment, it must first be *activated*. Activation involves altering the `PATH` and other environment variables in the active shell (usually Bash). This can be accomplished in various ways.
+
+### Directly
 
 ```bash
 eval "$(micromamba shell hook --shell=bash)"
 micromamba activate --prefix=/opt/conda
 ```
 
-The first command executes a sequence of commands which defines a shell hook, also named `micromamba`. (Otherwise, the `micromamba` executable would run as a *subprocess* which is unable to modify the environment of the shell.) The second command runs the shell hook to activate the environment located at `/opt/conda`.
+The first command executes a sequence of commands which define a Bash function, also named `micromamba`. (Otherwise, the `micromamba` executable would run as a *subprocess* which is unable to modify the environment of the shell.) The second command runs the newly-defined Bash function to activate the environment located at `/opt/conda`.
 
-Since micromamba is experimental, it is advisable to install `mamba` and run
+### With an initialization script
+
+```bash
+micromamba shell init --shell=bash --prefix=/opt/conda
+```
+
+This modifies `~/.bashrc` so that in subsequent interactive Bash sessions, the command `micromamba activate` suffices to activate the environment. (The command `micromamba activate` can be added to `~/.bashrc` if desired.)
+
+### With mamba or conda
+
+Since micromamba is experimental, instead of relying on the above possibilities which use `micromamba` for activation, it is advisable to install `mamba` into the environment and run
 
 ```bash
 /opt/conda/bin/conda init bash
 /opt/conda/bin/mamba init bash
 ```
 
-These commands modify `~/.bashrc` so that upon next login the environment will be activated.
+These commands modify `~/.bashrc` so that the environment will be fully activated in subsequent interactive Bash sessions.
 
-License
--------
+### Troubleshooting
+
+If Bash is *not* being run interactively, then the `.bashrc` will not be sourced, so running `micromamba activate` will fail. In this case, you can either use the [direct activation procedure](#directly) or force an interactive shell by passing the `-i` flag to the `bash` command.
+
+## License
 
 MIT
 
-Author Information
-------------------
+## Author Information
 
-I'm fairly new to Ansible, so probably many things can be accomplished more efficiently than what I have done here. I am grateful for any advice, and especially pull requests.
+I'm fairly new to Ansible, so probably many things can be accomplished more efficiently than what I have done here. I would be grateful for any advice, and especially pull requests.
