@@ -2,6 +2,11 @@
 
 Installs micromamba, and optionally create a root/base conda environment.
 
+## Links
+
+* [GitHub](https://github.com/maresb/ansible-micromamba-role)
+* [Galaxy](https://galaxy.ansible.com/maresb/micromamba)
+
 ## Motivation
 
 [Conda](https://docs.conda.io/projects/conda) is a very powerful Python-centric dependency management tool. Unfortunately, for environments with large numbers of dependencies, its slow dependency solver can take [hours](https://github.com/iterative/dvc.org/issues/2370#issuecomment-818891218) to complete.
