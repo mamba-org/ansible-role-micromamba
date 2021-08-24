@@ -2,31 +2,60 @@
 - name: Converge
   hosts: all
   tasks:
+
     - name: Install just the executable
       include_role:
         name: maresb.micromamba
-    - name: Install just the executable
+
+    - name: Create condauser
+      user:
+        name: condauser
+
+    - name: Create user-based prefix at /home/condauser/micromamba-test
       include_role:
         name: maresb.micromamba
       vars:
+        ansible_user: condauser
         root_prefix: ~/micromamba-test
+        root_prefix_condarc:
+          channels:
+            - conda-forge
+        packages:
+          - s3fs-fuse
+
+    - name: Test /home/condauser/micromamba-test
+      include: tasks/test-prefix.yml
+      vars:
+        user: condauser
+        prefix: ~/micromamba-test
+        test_command: s3fs --version
+
+    - name: Create a prefix, install packages, create .condarc in /opt/conda
+      include_role:
+        name: maresb.micromamba
+      vars:
+        root_prefix: /opt/conda
         packages:
           - s3fs-fuse
         root_prefix_condarc:
           channels:
             - conda-forge
           show_channel_urls: true
-    - name: Check if already initialized
-      # <https://docs.ansible.com/ansible/latest/user_guide/playbooks_checkmode.html#enforcing-or-preventing-check-mode-on-tasks>
-      lineinfile:
-        path: ~/.bashrc
-        line: '# >>> mamba initialize >>>'
-        state: present
-      check_mode: true
-      register: init_presence
-    - name: Initialize the environment
-      command: 'micromamba shell init --shell=bash --prefix=~/micromamba-test'
-      when: init_presence.changed
-    - name: Test s3fs
-      command: 'bash -i -c "micromamba activate; s3fs --version"'
-      changed_when: false
+
+    - name: Workaround for mamba-org/mamba#1139
+    # https://github.com/mamba-org/mamba/issues/1139
+      file:
+        path: /opt/conda/etc/profile.d
+        state: directory
+        mode: "u+rwx,g+rx,o+rx"
+
+    - name: Create condauser
+      user:
+        name: condauser2
+
+    - name: Test /opt/conda
+      include: tasks/test-prefix.yml
+      vars:
+        user: condauser2
+        prefix: /opt/conda
+        test_command: s3fs --version

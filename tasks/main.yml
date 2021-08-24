@@ -1,4 +1,4 @@
-- name: Check if micromamba already exists
+- name: Check if micromamba already exists in "{{ dest }}"
   stat:
     path: "{{ dest }}"
   register: dest_stat
@@ -31,7 +31,7 @@
 # 'micromamba install' command. Thus it's convenient to checking 'first_args is defined'
 # in what follows.
 
-- name: Build channel argument list
+- name: Build channel part of arguments
   set_fact:
     channel_args: "{{ ['--channel='] | product(channels) | map('join') | list }}"
   when: first_args is defined
