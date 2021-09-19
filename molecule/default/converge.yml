@@ -11,6 +11,12 @@
       user:
         name: condauser
 
+    - name: Copy lockfile
+      copy:
+        src: "{{ playbook_dir }}/conda-linux-64.lock"
+        dest: "/home/condauser/conda-linux-64.lock"
+        mode: "644"
+
     - name: Create user-based prefix at /home/condauser/micromamba-test
       include_role:
         name: maresb.micromamba
@@ -20,8 +26,7 @@
         root_prefix_condarc:
           channels:
             - conda-forge
-        packages:
-          - s3fs-fuse
+        file: /home/condauser/conda-linux-64.lock
 
     - name: Test /home/condauser/micromamba-test
       include: tasks/test-prefix.yml

@@ -16,7 +16,8 @@ repos:
     rev: v5.1.2
     hooks:
       - id: ansible-lint
-        files: \.(yaml|yml)$
+        exclude: environment.yaml  # TODO: Why doesn't this work?
+        types: [yaml]
 
   # - repo: https://github.com/markdownlint/markdownlint
   #   rev: v0.11.0

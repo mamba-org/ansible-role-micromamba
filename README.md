@@ -55,6 +55,14 @@ A list of initial conda packages to be installed when a new root prefix is creat
 ---
 
 ```yaml
+file: /tmp/environment.yaml
+```
+
+As an alternative to the list of `packages`, an environment file or lock file can be provided.
+
+---
+
+```yaml
 root_prefix_condarc:
   channels:
     - conda-forge

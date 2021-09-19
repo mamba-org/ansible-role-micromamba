@@ -21,6 +21,7 @@
       - --yes
       - "--root-prefix={{ root_prefix }}"
       - "{{ ('--name=' + name) if name is defined else '' }}"
+      - "{{ ('--file=' + file) if file is defined else '' }}"
       - "{{ ('--prefix=' + (prefix | default(root_prefix) )) if name is not defined else '' }}"
   when: (root_prefix_stat.stat is defined) and not root_prefix_stat.stat.exists
 

@@ -1,0 +1,11 @@
+# Used to create `conda-linux-64.lock` with the command
+#     conda-lock -f environmentyaml --platform=linux-64
+#
+# Note: I removed the '.' character from the filename because I couldn't get
+# the pre-commit exclude rule to work for this file for ansible-lint.
+
+name: test
+channels:
+  - conda-forge
+dependencies:
+  - s3fs-fuse
