@@ -6,6 +6,7 @@ Installs micromamba, and optionally create a root/base conda environment.
 
 * [GitHub](https://github.com/maresb/ansible-micromamba-role)
 * [Galaxy](https://galaxy.ansible.com/maresb/micromamba)
+* [Advanced usage example](https://github.com/maresb/micromamba-role-example) for bootstrapping and setting up a system conda environment in a Docker image
 
 ## Motivation
 
