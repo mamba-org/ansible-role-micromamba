@@ -1,12 +1,25 @@
-# Ansible role: maresb.micromamba
+# Migration notice
 
-Installs micromamba, and optionally create a root/base conda environment.
+This role has been accepted into the official Mamba organization! 🎉 🚀
 
-## Links
+Development under the `maresb` namespace will cease. Please switch to the Mamba organization instead, with the new links below.
+
+(The v1.2.X releases differ only in the README.)
+
+## New Links
+
+* [GitHub](https://github.com/mamba-org/ansible-role-micromamba)
+* [Galaxy](https://galaxy.ansible.com/mambaorg/micromamba)
+* [Advanced usage example](https://github.com/maresb/micromamba-role-example) for bootstrapping and setting up a system conda environment in a Docker image
+
+## Old Links
 
 * [GitHub](https://github.com/maresb/ansible-micromamba-role)
 * [Galaxy](https://galaxy.ansible.com/maresb/micromamba)
-* [Advanced usage example](https://github.com/maresb/micromamba-role-example) for bootstrapping and setting up a system conda environment in a Docker image
+
+## Ansible role: maresb.micromamba
+
+Install micromamba, and optionally create a root/base conda environment.
 
 ## Motivation
 
@@ -160,4 +173,4 @@ MIT
 
 ## Author Information
 
-I'm fairly new to Ansible, so probably many things can be accomplished more efficiently than what I have done here. I would be grateful for any advice, and especially pull requests.
+Currently maintained by Ben Mares (@maresb). Initial version by @maresb. Contributions are welcome!
