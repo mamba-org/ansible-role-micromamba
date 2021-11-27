@@ -160,4 +160,4 @@ MIT
 
 ## Author Information
 
-Currently maintained by Ben Mares (@maresb). Initial version by @maresb. Contributions are welcome!
+Currently maintained by Ben Mares (@maresb) and Andreas Trawoeger (@atrawog). Initial version by @maresb. Contributions are welcome!
