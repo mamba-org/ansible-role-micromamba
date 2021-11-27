@@ -1,25 +1,12 @@
-# Migration notice
+# Ansible role: mambaorg.micromamba
 
-This role has been accepted into the official Mamba organization! 🎉 🚀
+Install micromamba, and optionally create a root/base conda environment.
 
-Development under the `maresb` namespace will cease. Please switch to the Mamba organization instead, with the new links below.
-
-(The v1.2.X releases differ only in the README.)
-
-## New Links
+## Links
 
 * [GitHub](https://github.com/mamba-org/ansible-role-micromamba)
 * [Galaxy](https://galaxy.ansible.com/mambaorg/micromamba)
 * [Advanced usage example](https://github.com/maresb/micromamba-role-example) for bootstrapping and setting up a system conda environment in a Docker image
-
-## Old Links
-
-* [GitHub](https://github.com/maresb/ansible-micromamba-role)
-* [Galaxy](https://galaxy.ansible.com/maresb/micromamba)
-
-## Ansible role: maresb.micromamba
-
-Install micromamba, and optionally create a root/base conda environment.
 
 ## Motivation
 
@@ -90,7 +77,7 @@ Contents to write to `.condarc` in the new root prefix. If not defined, then no 
 - hosts: servers
   become: yes
   roles:
-      - maresb.micromamba
+      - mambaorg.micromamba
 ```
 
 This downloads the `micromamba` executable to the default location of `/usr/local/bin/micromamba`.
@@ -101,7 +88,7 @@ This downloads the `micromamba` executable to the default location of `/usr/loca
 - hosts: servers
   become: yes
   roles:
-      - maresb.micromamba
+      - mambaorg.micromamba
   vars:
     dest: /tmp/micromamba
     root_prefix: /opt/conda
@@ -119,7 +106,7 @@ This downloads `micromamba` into `/tmp/micromamba` and creates a new root prefix
   become: yes
   become_user: condauser
   roles:
-      - maresb.micromamba
+      - mambaorg.micromamba
   vars:
     root_prefix: ~/micromamba
     root_prefix_condarc:

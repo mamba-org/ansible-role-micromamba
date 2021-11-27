@@ -1,7 +1,7 @@
 galaxy_info:
   role_name: micromamba
   author: Ben Mares
-  namespace: maresb
+  namespace: mambaorg
   description: Install micromamba, and optionally create a base conda environment.
 
   license: MIT

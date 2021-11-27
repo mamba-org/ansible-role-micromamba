@@ -5,7 +5,7 @@
 
     - name: Install just the executable
       include_role:
-        name: maresb.micromamba
+        name: mambaorg.micromamba
 
     - name: Create condauser
       user:
@@ -19,7 +19,7 @@
 
     - name: Create user-based prefix at /home/condauser/micromamba-test
       include_role:
-        name: maresb.micromamba
+        name: mambaorg.micromamba
       vars:
         ansible_user: condauser
         root_prefix: ~/micromamba-test
@@ -37,7 +37,7 @@
 
     - name: Create a prefix, install packages, create .condarc in /opt/conda
       include_role:
-        name: maresb.micromamba
+        name: mambaorg.micromamba
       vars:
         root_prefix: /opt/conda
         packages:
