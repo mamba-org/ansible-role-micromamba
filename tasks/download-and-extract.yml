@@ -1,10 +1,10 @@
 - name: Make temporary directory for micromamba
-  tempfile:
+  ansible.builtin.tempfile:
     state: directory
   register: tmpdir
 
 - name: Install micromamba
-  unarchive:
+  ansible.builtin.unarchive:
     remote_src: true
     src: "{{ base_url }}/{{ arch }}/{{ version }}"
     dest: "{{ tmpdir.path }}"
@@ -19,13 +19,13 @@
     # include: bin/micromamba
 
 - name: Copy micromamba to destination
-  copy:
+  ansible.builtin.copy:
     remote_src: true
     src: "{{ tmpdir.path }}/bin/micromamba"
     dest: "{{ dest }}"
     mode: "u=rwx,g=rx,o=rx"
 
 - name: Remove temporary directory
-  file:
+  ansible.builtin.file:
     path: "{{ tmpdir.path }}"
     state: absent

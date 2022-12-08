@@ -1,7 +1,7 @@
-- name: "Register the md5 of ~/.bashrc for {{ user }} before init"
+- name: "Register the md5 of ~/.bashrc before init for  {{ user }}"
   become: true
   become_user: "{{ user }}"
-  stat:
+  ansible.builtin.stat:
     path: ~/.bashrc
     get_md5: true
   register: bashrc_stat_before
@@ -9,24 +9,24 @@
 - name: Initialize the environment
   become: true
   become_user: "{{ user }}"
-  command: "micromamba shell init --shell=bash --prefix={{ prefix }}"
+  ansible.builtin.command: "micromamba shell init --shell=bash --prefix={{ prefix }}"
   changed_when: false
 
-- name: "Register the md5 of ~/.bashrc for {{ user }} after init"
+- name: "Register the md5 of ~/.bashrc after init for {{ user }}"
   become: true
   become_user: "{{ user }}"
-  stat:
+  ansible.builtin.stat:
     path: ~/.bashrc
     get_md5: true
   register: bashrc_stat_after
 
 - name: Check whether or not initialization altered ~/.bashrc
-  debug:
+  ansible.builtin.debug:
     msg: "Before: {{ bashrc_stat_before.stat.md5 | default('None') }}, After: {{ bashrc_stat_after.stat.md5 }}."
   changed_when: (not bashrc_stat_before.stat.exists) or ( bashrc_stat_before.stat.md5 != bashrc_stat_after.stat.md5 )
 
 - name: Test {{ test_command }}
   become: true
   become_user: "{{ user }}"
-  command: 'bash -i -c "micromamba activate; {{ test_command }}"'
+  ansible.builtin.command: 'bash -i -c "micromamba activate; {{ test_command }}"'
   changed_when: false
