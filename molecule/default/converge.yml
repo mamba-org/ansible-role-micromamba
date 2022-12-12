@@ -4,21 +4,21 @@
   tasks:
 
     - name: Install just the executable
-      include_role:
+      ansible.builtin.include_role:
         name: mambaorg.micromamba
 
     - name: Create condauser
-      user:
+      ansible.builtin.user:
         name: condauser
 
     - name: Copy lockfile
-      copy:
+      ansible.builtin.copy:
         src: "{{ playbook_dir }}/conda-linux-64.lock"
         dest: "/home/condauser/conda-linux-64.lock"
         mode: "644"
 
     - name: Create user-based prefix at /home/condauser/micromamba-test
-      include_role:
+      ansible.builtin.include_role:
         name: mambaorg.micromamba
       vars:
         ansible_user: condauser
@@ -29,14 +29,14 @@
         file: /home/condauser/conda-linux-64.lock
 
     - name: Test /home/condauser/micromamba-test
-      include: tasks/test-prefix.yml
+      ansible.builtin.import_tasks: tasks/test-prefix.yml
       vars:
         user: condauser
         prefix: ~/micromamba-test
         test_command: s3fs --version
 
     - name: Create a prefix, install packages, create .condarc in /opt/conda
-      include_role:
+      ansible.builtin.include_role:
         name: mambaorg.micromamba
       vars:
         root_prefix: /opt/conda
@@ -49,17 +49,17 @@
 
     - name: Workaround for mamba-org/mamba#1139
     # https://github.com/mamba-org/mamba/issues/1139
-      file:
+      ansible.builtin.file:
         path: /opt/conda/etc/profile.d
         state: directory
         mode: "u+rwx,g+rx,o+rx"
 
     - name: Create condauser
-      user:
+      ansible.builtin.user:
         name: condauser2
 
     - name: Test /opt/conda
-      include: tasks/test-prefix.yml
+      ansible.builtin.include_tasks: tasks/test-prefix.yml
       vars:
         user: condauser2
         prefix: /opt/conda
