@@ -14,20 +14,34 @@
     mode: "a+r,u+w"
   when: (first_args is defined) and (root_prefix_condarc is defined)
 
+- name: Create environments
+  ansible.builtin.import_tasks: create_envs.yml
+  when: envs is defined
+
 - name: Check if /etc/bash.bashrc is present (ubuntu/debian)
   ansible.builtin.stat:
     path: "/etc/bash.bashrc"
   register: file_stat_bash_bashrc
 
-- name: Create environments
-  include_tasks: create_envs.yml
-  when: envs is defined
+- name: Enable micromamba in bash (ubuntu/debian)
+  ansible.builtin.lineinfile:
+    path: "/etc/bash.bashrc"
+    regexp: '^eval "\$\({{ dest }} shell hook --shell=bash\)"$'
+    line: eval "$({{ dest }} shell hook --shell=bash)"
+    insertafter: EOF
+    state: present
+  when: file_stat_bash_bashrc.stat.exists and file_stat_bash_bashrc.stat.isreg
+
+- name: Check if /etc/bashrc is present (redhat-like)
+  ansible.builtin.stat:
+    path: "/etc/bashrc"
+  register: file_stat_bashrc
 
 - name: Enable micromamba in bash (redhat-like)
   ansible.builtin.lineinfile:
     path: "/etc/bashrc"
-    regexp: '^eval "\$\(micromamba shell hook --shell=bash\)"$'
-    line: eval "$(micromamba shell hook --shell=bash)"
+    regexp: '^eval "\$\({{ dest }} shell hook --shell=bash\)"$'
+    line: eval "$({{ dest }} shell hook --shell=bash)"
     insertafter: EOF
     state: present
   when: file_stat_bashrc.stat.exists and file_stat_bashrc.stat.isreg
@@ -40,8 +54,8 @@
 - name: Enable micromamba in zsh if present
   ansible.builtin.lineinfile:
     path: "/etc/zsh/zshrc"
-    regexp: '^eval "\$\(micromamba shell hook --shell=zsh\)"$'
-    line: eval "$(micromamba shell hook --shell=zsh)"
+    regexp: '^eval "\$\({{ dest }} shell hook --shell=zsh\)"$'
+    line: eval "$({{ dest }} shell hook --shell=zsh)"
     insertafter: EOF
     state: present
   when: file_stat_zshrc.stat.exists and file_stat_zshrc.stat.isreg
