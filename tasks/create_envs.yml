@@ -1,13 +1,13 @@
 - name: Check if environment exists
-  stat:
-    path: "{{ root_prefix }}/{{ item.key }}"
+  ansible.builtin.stat:
+    path: "{{ prefix }}/{{ item.key }}"
   register: env_stat
   loop: "{{ envs | dict2items }}"
   loop_control:
     loop_var: item
 
 - name: Create environments with micromamba
-  command: >
+  ansible.builtin.command: >
     {{ dest }} create 
     --name={{ item.key }} 
     --root-prefix={{ root_prefix }}
