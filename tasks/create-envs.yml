@@ -1,0 +1,21 @@
+- name: Check if environment exists
+  ansible.builtin.stat:
+    path: "{{ prefix }}/{{ item.key }}"
+  register: env_stat
+  loop: "{{ envs | dict2items }}"
+  loop_control:
+    loop_var: item
+
+- name: Create environments with micromamba
+  ansible.builtin.command: >
+    {{ dest }} create 
+    --name={{ item.key }} 
+    --root-prefix={{ root_prefix }}
+    {{ item.value.channels | map('regex_replace', '^', '--channel=') | join(' ') }}
+    {{ item.value.packages | join(' ') }}
+    --yes
+  when: env_stat.results[ansible_loop.index0].stat.exists == false
+  loop: "{{ envs | dict2items }}"
+  loop_control:
+    loop_var: item
+    extended: true

@@ -7,41 +7,6 @@
   ansible.builtin.import_tasks: download-and-extract.yml
   when: not dest_stat.stat.exists
 
-- name: Check if root_prefix is defined but doesn't exist
-  ansible.builtin.stat:
-    path: "{{ root_prefix }}"
-  register: root_prefix_stat
-  when: root_prefix is defined
-
-- name: Build first part of arguments
-  ansible.builtin.set_fact:
-    first_args:
-      - micromamba
-      - install
-      - --yes
-      - "--root-prefix={{ root_prefix }}"
-      - "{{ ('--name=' + name) if name is defined else '' }}"
-      - "{{ ('--file=' + file) if file is defined else '' }}"
-      - "{{ ('--prefix=' + (prefix | default(root_prefix))) if name is not defined else '' }}"
-  when: (root_prefix_stat.stat is defined) and not root_prefix_stat.stat.exists
-
-# Note: at this point, 'first_args' is defined by the previous task exactly when
-#   1. the root_prefix has been specified, and
-#   2. the corresponding directory does not yet exist.
-# This coincides with the condition that we want to proceed with the
-# 'micromamba install' command. Thus it's convenient to checking 'first_args is defined'
-# in what follows.
-
-- name: Build channel part of arguments
-  ansible.builtin.set_fact:
-    channel_args: "{{ ['--channel='] | product(channels) | map('join') | list }}"
-  when: first_args is defined
-
-- name: Create a new conda environment
-  ansible.builtin.command:
-    argv: "{{ (first_args + channel_args + packages) | reject('equalto', '') | list }}"
-  when: first_args is defined
-
 - name: Create .condarc file
   ansible.builtin.copy:
     dest: "{{ root_prefix }}/.condarc"
@@ -49,44 +14,9 @@
     mode: "a+r,u+w"
   when: (first_args is defined) and (root_prefix_condarc is defined)
 
-- name: Check if /etc/bash.bashrc is present (ubuntu/debian)
-  ansible.builtin.stat:
-    path: "/etc/bash.bashrc"
-  register: file_stat_bash_bashrc
+- name: Create environments
+  ansible.builtin.import_tasks: create-envs.yml
+  when: envs is defined
 
-- name: Enable micromamba in bash (ubuntu/debian)
-  ansible.builtin.lineinfile:
-    path: "/etc/bash.bashrc"
-    regexp: '^eval "\$\(micromamba shell hook --shell=bash\)"$'
-    line: eval "$(micromamba shell hook --shell=bash)"
-    insertafter: EOF
-    state: present
-  when: file_stat_bash_bashrc.stat.exists and file_stat_bash_bashrc.stat.isreg
-
-- name: Check if /etc/bashrc is present (redhat-like)
-  ansible.builtin.stat:
-    path: "/etc/bashrc"
-  register: file_stat_bashrc
-
-- name: Enable micromamba in bash (redhat-like)
-  ansible.builtin.lineinfile:
-    path: "/etc/bashrc"
-    regexp: '^eval "\$\(micromamba shell hook --shell=bash\)"$'
-    line: eval "$(micromamba shell hook --shell=bash)"
-    insertafter: EOF
-    state: present
-  when: file_stat_bashrc.stat.exists and file_stat_bashrc.stat.isreg
-
-- name: Check if zshrc is present
-  ansible.builtin.stat:
-    path: "/etc/zsh/zshrc"
-  register: file_stat_zshrc
-
-- name: Enable micromamba in zsh if present
-  ansible.builtin.lineinfile:
-    path: "/etc/zsh/zshrc"
-    regexp: '^eval "\$\(micromamba shell hook --shell=zsh\)"$'
-    line: eval "$(micromamba shell hook --shell=zsh)"
-    insertafter: EOF
-    state: present
-  when: file_stat_zshrc.stat.exists and file_stat_zshrc.stat.isreg
+- name: Setup bashrc
+  ansible.builtin.import_tasks: setup-bashrc.yml

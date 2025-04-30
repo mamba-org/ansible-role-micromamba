@@ -118,6 +118,34 @@ This downloads `micromamba` into `/tmp/micromamba` and creates a new root prefix
 
 This creates a new root prefix in `/home/conda-user/micromamba` and creates a conda environment without Python. It also places a `.condarc` file in the root prefix to configure packages to be installed by default from the `conda-forge` channel.
 
+---
+
+```yaml
+- hosts: servers
+  become: yes
+  become_user: condauser
+  roles:
+      - mambaorg.micromamba
+  vars:
+    dest: "~/micromamba/micromamba" # Executable location
+    root_prefix: "~/micromamba" # Installation location
+    prefix: "~/micromamba/envs" # Environment locations
+    envs:
+      env_one:
+        channels:
+          - conda-forge
+        packages:
+          - python=3.12.*
+      env_two:
+        channels:
+          - conda-forge
+          - bioconda
+        packages:
+          - python=3.11.*
+```
+
+This creates a new root prefix in `/home/condauser/micromamba` and creates two conda environments with different channels and packages.
+
 ## Subsequent Usage
 
 In order run any commands from a conda environment, it must first be *activated*. Activation involves altering the `PATH` and other environment variables in the active shell (usually Bash). This can be accomplished in various ways.
