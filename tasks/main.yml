@@ -15,7 +15,7 @@
   when: (first_args is defined) and (root_prefix_condarc is defined)
 
 - name: Create environments
-  ansible.builtin.import_tasks: create_envs.yml
+  ansible.builtin.import_tasks: create-envs.yml
   when: envs is defined
 
 - name: Check if /etc/bash.bashrc is present (ubuntu/debian)
