@@ -129,7 +129,7 @@ This creates a new root prefix in `/home/conda-user/micromamba` and creates a co
   vars:
     dest: "~/micromamba/micromamba" # Executable location
     root_prefix: "~/micromamba" # Installation location
-    prefix: "{{ galaxy_root }}/micromamba/envs" # Environment locations
+    prefix: "~/micromamba/envs" # Environment locations
     envs:
       env_one:
         channels:
