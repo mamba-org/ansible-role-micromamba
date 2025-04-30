@@ -135,13 +135,13 @@ This creates a new root prefix in `/home/conda-user/micromamba` and creates a co
         channels:
           - conda-forge
         packages:
-          - python=3.12
+          - python=3.12.*
       env_two:
         channels:
           - conda-forge
           - bioconda
         packages:
-          - python=3.11
+          - python=3.11.*
 ```
 
 This creates a new root prefix in `/home/condauser/micromamba` and creates two conda environments with different channels and packages.
